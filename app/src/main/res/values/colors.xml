@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="ink">#FF07090C</color>
+    <color name="panel">#FF151A21</color>
+    <color name="panel2">#FF1E242D</color>
+    <color name="line">#FF333C49</color>
+    <color name="text">#FFF4F7FB</color>
+    <color name="muted">#FF98A2B3</color>
+    <color name="accent">#FFFF6A3D</color>
+    <color name="ok">#FF7CE0A8</color>
+    <color name="warn">#FFE8B464</color>
+    <color name="rec">#FFFF3B30</color>
+    <color name="scrim">#9E141820</color>
+    <color name="barScrim">#E6060809</color>
+</resources>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Telebuonta</string>
+    <string name="cd_record">Record</string>
+    <string name="cd_scroll">Start or pause scrolling</string>
+    <string name="cd_flip">Switch camera</string>
+    <string name="cd_scripts">Scripts</string>
+    <string name="cd_settings">Settings</string>
+    <string name="cd_resize">Drag to resize the panel</string>
+    <string name="cd_move">Drag to move the panel</string>
+    <string name="cd_edit">Edit script</string>
+</resources>

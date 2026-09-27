@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/black">
+
+    <androidx.camera.view.PreviewView
+        android:id="@+id/preview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:scaleType="fillCenter" />
+
+    <!-- ============ prompter panel ============ -->
+    <FrameLayout
+        android:id="@+id/panel"
+        android:layout_width="match_parent"
+        android:layout_height="320dp"
+        android:layout_gravity="top"
+        android:background="@color/scrim">
+
+        <FrameLayout
+            android:id="@+id/viewport"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipChildren="true"
+            android:clipToPadding="true">
+
+            <TextView
+                android:id="@+id/script"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="18dp"
+                android:paddingEnd="18dp"
+                android:textColor="@color/text"
+                android:textSize="30sp"
+                android:textStyle="bold"
+                android:lineSpacingMultiplier="1.32"
+                android:shadowColor="#E6000000"
+                android:shadowDx="0"
+                android:shadowDy="2"
+                android:shadowRadius="10"
+                android:text="" />
+        </FrameLayout>
+
+        <View
+            android:id="@+id/progress"
+            android:layout_width="0dp"
+            android:layout_height="2dp"
+            android:layout_gravity="bottom|start"
+            android:background="@color/accent" />
+
+        <!-- panel chrome -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:layout_gravity="bottom"
+            android:background="#80070910"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp">
+
+            <ImageButton
+                android:id="@+id/gripResize"
+                android:layout_width="42dp"
+                android:layout_height="32dp"
+                android:background="@drawable/bg_grip"
+                android:contentDescription="@string/cd_resize"
+                android:padding="7dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_resize" />
+
+            <Space
+                android:layout_width="6dp"
+                android:layout_height="1dp" />
+
+            <ImageButton
+                android:id="@+id/gripMove"
+                android:layout_width="42dp"
+                android:layout_height="32dp"
+                android:background="@drawable/bg_grip"
+                android:contentDescription="@string/cd_move"
+                android:padding="7dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_move" />
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1" />
+
+            <ImageButton
+                android:id="@+id/gripEdit"
+                android:layout_width="42dp"
+                android:layout_height="32dp"
+                android:background="@drawable/bg_grip"
+                android:contentDescription="@string/cd_edit"
+                android:padding="7dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_edit" />
+        </LinearLayout>
+    </FrameLayout>
+
+    <!-- ============ hud ============ -->
+    <LinearLayout
+        android:id="@+id/hud"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|start"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="12dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <View
+            android:id="@+id/recDot"
+            android:layout_width="9dp"
+            android:layout_height="9dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/bg_dot"
+            android:visibility="invisible" />
+
+        <TextView
+            android:id="@+id/clock"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_pill"
+            android:fontFamily="monospace"
+            android:paddingStart="11dp"
+            android:paddingTop="5dp"
+            android:paddingEnd="11dp"
+            android:paddingBottom="5dp"
+            android:textColor="@color/text"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <!-- mic meter -->
+    <FrameLayout
+        android:id="@+id/meterBox"
+        android:layout_width="6dp"
+        android:layout_height="64dp"
+        android:layout_gravity="top|end"
+        android:layout_marginTop="14dp"
+        android:layout_marginEnd="12dp"
+        android:background="@drawable/bg_meter">
+
+        <View
+            android:id="@+id/meterFill"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_gravity="bottom"
+            android:background="@color/ok" />
+    </FrameLayout>
+
+    <!-- countdown -->
+    <TextView
+        android:id="@+id/countdown"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#73000000"
+        android:fontFamily="monospace"
+        android:gravity="center"
+        android:textColor="@color/text"
+        android:textSize="110sp"
+        android:textStyle="bold"
+        android:visibility="gone" />
+
+    <!-- ============ bottom bar ============ -->
+    <LinearLayout
+        android:id="@+id/bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="@drawable/bg_bar"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="10dp"
+        android:paddingTop="10dp"
+        android:paddingEnd="10dp"
+        android:paddingBottom="14dp">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="start|center_vertical"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/btnSettings"
+                android:layout_width="46dp"
+                android:layout_height="46dp"
+                android:background="@drawable/bg_chip"
+                android:contentDescription="@string/cd_settings"
+                android:padding="11dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_settings" />
+
+            <Space
+                android:layout_width="8dp"
+                android:layout_height="1dp" />
+
+            <ImageButton
+                android:id="@+id/btnScripts"
+                android:layout_width="46dp"
+                android:layout_height="46dp"
+                android:background="@drawable/bg_chip"
+                android:contentDescription="@string/cd_scripts"
+                android:padding="11dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_list" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/btnPause"
+                android:layout_width="46dp"
+                android:layout_height="46dp"
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/bg_chip"
+                android:contentDescription="@string/cd_scroll"
+                android:padding="12dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_pause"
+                android:visibility="gone" />
+
+            <ImageButton
+                android:id="@+id/btnRecord"
+                android:layout_width="68dp"
+                android:layout_height="68dp"
+                android:background="@drawable/bg_record"
+                android:contentDescription="@string/cd_record"
+                android:scaleType="fitCenter" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="end|center_vertical"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/btnFlip"
+                android:layout_width="46dp"
+                android:layout_height="46dp"
+                android:background="@drawable/bg_chip"
+                android:contentDescription="@string/cd_flip"
+                android:padding="11dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_flip" />
+
+            <Space
+                android:layout_width="8dp"
+                android:layout_height="1dp" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="46dp"
+                android:background="@drawable/bg_chip"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/btnSlower"
+                    android:layout_width="38dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="−"
+                    android:textColor="@color/text"
+                    android:textSize="19sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/speedVal"
+                    android:layout_width="24dp"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="monospace"
+                    android:gravity="center"
+                    android:textColor="@color/muted"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+                <ImageButton
+                    android:id="@+id/btnScroll"
+                    android:layout_width="38dp"
+                    android:layout_height="match_parent"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="@string/cd_scroll"
+                    android:padding="11dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_play" />
+
+                <TextView
+                    android:id="@+id/btnFaster"
+                    android:layout_width="38dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="+"
+                    android:textColor="@color/text"
+                    android:textSize="19sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+</FrameLayout>

@@ -66,6 +66,7 @@ class MainActivity : AppCompatActivity() {
     private var countdownSecs = 3
     private var targetSecs = 75
     private var quality = 1080
+    private var actualQuality = "checking"
     private var frontCamera = true
 
     private var scrollY = 0f
@@ -187,11 +188,30 @@ class MainActivity : AppCompatActivity() {
 
             try {
                 provider.unbindAll()
-                provider.bindToLifecycle(this, selector, preview, videoCapture)
+                val camera = provider.bindToLifecycle(this, selector, preview, videoCapture)
+                reportActualQuality(camera)
             } catch (e: Exception) {
                 toast("Couldn't open the camera: ${e.message}")
             }
         }, ContextCompat.getMainExecutor(this))
+    }
+
+    /** Tells you what the camera actually granted, rather than what was asked for. */
+    private fun reportActualQuality(camera: androidx.camera.core.Camera) {
+        try {
+            val caps = Recorder.getVideoCapabilities(camera.cameraInfo)
+            val supported = caps.getSupportedQualities(androidx.camera.core.DynamicRange.SDR)
+            val best = supported.firstOrNull()
+            actualQuality = when (best) {
+                Quality.UHD -> "2160p"
+                Quality.FHD -> "1080p"
+                Quality.HD -> "720p"
+                Quality.SD -> "480p"
+                else -> "unknown"
+            }
+        } catch (_: Exception) {
+            actualQuality = "unknown"
+        }
     }
 
     @SuppressLint("MissingPermission")
@@ -642,7 +662,7 @@ class MainActivity : AppCompatActivity() {
                 prefs().edit().putInt("countdown", countdownSecs).apply()
                 toast("Countdown ${if (countdownSecs == 0) "off" else "${countdownSecs}s"}")
             }
-            .setNegativeButton("Quality: ${quality}p") { _, _ ->
+            .setNegativeButton("Quality: ${quality}p (device max ${actualQuality})") { _, _ ->
                 quality = when (quality) { 720 -> 1080; 1080 -> 2160; else -> 720 }
                 prefs().edit().putInt("quality", quality).apply()
                 startCamera()

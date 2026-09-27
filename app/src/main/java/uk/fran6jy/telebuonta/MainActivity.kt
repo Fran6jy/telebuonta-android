@@ -87,6 +87,22 @@ class MainActivity : AppCompatActivity() {
     private var meterThread: Thread? = null
     @Volatile private var meterRunning = false
 
+    /** Keeps recorded video the right way up when the phone is turned. */
+    private val rotationWatcher by lazy {
+        object : android.view.OrientationEventListener(this) {
+            override fun onOrientationChanged(degrees: Int) {
+                if (degrees == ORIENTATION_UNKNOWN) return
+                val rotation = when (degrees) {
+                    in 45 until 135 -> android.view.Surface.ROTATION_270
+                    in 135 until 225 -> android.view.Surface.ROTATION_180
+                    in 225 until 315 -> android.view.Surface.ROTATION_90
+                    else -> android.view.Surface.ROTATION_0
+                }
+                videoCapture?.targetRotation = rotation
+            }
+        }
+    }
+
     private val choreographer by lazy { Choreographer.getInstance() }
     private val frameCallback = object : Choreographer.FrameCallback {
         private var last = 0L
@@ -134,6 +150,16 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        if (rotationWatcher.canDetectOrientation()) rotationWatcher.enable()
+    }
+
+    override fun onPause() {
+        rotationWatcher.disable()
+        super.onPause()
+    }
+
     override fun onDestroy() {
         stopMeter()
         recording?.stop()
@@ -168,19 +194,31 @@ class MainActivity : AppCompatActivity() {
                 it.setSurfaceProvider(b.preview.surfaceProvider)
             }
 
+            val wanted = when (quality) {
+                2160 -> Quality.UHD
+                720 -> Quality.HD
+                else -> Quality.FHD
+            }
             val recorder = Recorder.Builder()
                 .setQualitySelector(
                     QualitySelector.from(
-                        when (quality) {
-                            2160 -> Quality.UHD
-                            720 -> Quality.HD
-                            else -> Quality.FHD
-                        },
+                        wanted,
                         androidx.camera.video.FallbackStrategy.lowerQualityOrHigherThan(Quality.HD)
                     )
                 )
+                // CameraX picks a conservative default. Ask for a bitrate that
+                // matches the resolution so detail survives the encode.
+                .setTargetVideoEncodingBitRate(
+                    when (quality) {
+                        2160 -> 40_000_000
+                        1080 -> 16_000_000
+                        else -> 9_000_000
+                    }
+                )
                 .build()
-            videoCapture = VideoCapture.withOutput(recorder)
+            videoCapture = VideoCapture.withOutput(recorder).also {
+                it.targetRotation = windowManager.defaultDisplay.rotation
+            }
 
             val selector =
                 if (frontCamera) CameraSelector.DEFAULT_FRONT_CAMERA
@@ -208,6 +246,10 @@ class MainActivity : AppCompatActivity() {
                 Quality.HD -> "720p"
                 Quality.SD -> "480p"
                 else -> "unknown"
+            }
+            val profiles = caps.getProfiles(best ?: Quality.FHD, androidx.camera.core.DynamicRange.SDR)
+            profiles?.defaultVideoProfile?.let {
+                actualQuality = "${it.width}x${it.height} @ ${it.frameRate}fps"
             }
         } catch (_: Exception) {
             actualQuality = "unknown"
